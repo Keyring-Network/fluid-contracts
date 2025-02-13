@@ -27,11 +27,6 @@ contract ChainlinkCenterPriceL2 is FluidCenterPriceL2, IFluidOracle, ChainlinkOr
         return super.infoName();
     }
 
-    /// @inheritdoc FluidCenterPriceL2
-    function targetDecimals() public pure override(IFluidOracle, FluidCenterPriceL2) returns (uint8) {
-        return super.targetDecimals();
-    }
-
     /// @inheritdoc IFluidOracle
     function getExchangeRate() external view virtual returns (uint256 exchangeRate_) {
         _ensureSequencerUpAndValid();

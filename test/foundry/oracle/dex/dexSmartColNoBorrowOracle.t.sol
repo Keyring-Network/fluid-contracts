@@ -11,8 +11,6 @@ import { IFluidOracle } from "../../../../contracts/oracle/fluidOracle.sol";
 import "forge-std/console.sol";
 
 contract DexSmartColNoBorrowOracleTest is Test {
-    uint8 public constant SAMPLE_TARGET_DECIMALS = 20; // sample target decimals - doesn't matter in test
-
     address internal constant DEX_USDC_ETH = 0x2886a01a0645390872a9eb99dAe1283664b0c524;
 
     DexSmartColNoBorrowOracle oracle;
@@ -26,7 +24,6 @@ contract DexSmartColNoBorrowOracleTest is Test {
         oracle = new DexSmartColNoBorrowOracle(
             DexSmartColNoBorrowOracle.DexSmartColNoBorrowOracleParams(
                 "USDC per 1 USDC/ETH share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in token0, USDC
                 IFluidOracle(address(0)),
@@ -43,7 +40,6 @@ contract DexSmartColNoBorrowOracleTest is Test {
         oracle = new DexSmartColNoBorrowOracle(
             DexSmartColNoBorrowOracle.DexSmartColNoBorrowOracleParams(
                 "ETH per 1 USDC/ETH share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 false, // quote in token1, ETH
                 IFluidOracle(address(0)),
@@ -62,7 +58,6 @@ contract DexSmartColNoBorrowOracleTest is Test {
         oracle = new DexSmartColNoBorrowOracle(
             DexSmartColNoBorrowOracle.DexSmartColNoBorrowOracleParams(
                 "WSTETH per 1 USDC/ETH share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 false, // quote in token1, ETH
                 IFluidOracle(wstETHContractRate), // assume WSTETH as debt, so USDC-ETH / WSTETH

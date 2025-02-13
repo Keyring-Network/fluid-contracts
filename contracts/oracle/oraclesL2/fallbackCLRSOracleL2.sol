@@ -4,8 +4,6 @@ pragma solidity 0.8.21;
 import { FluidOracleL2 } from "../fluidOracleL2.sol";
 import { FallbackCLRSOracle } from "../oracles/fallbackCLRSOracle.sol";
 
-/// @DEV DEPRECATED. USE GENERIC ORACLE INSTEAD. WILL BE REMOVED SOON.
-
 /// @title   Chainlink / Redstone Oracle (with fallback) for Layer 2 (with sequencer outage detection)
 /// @notice  Gets the exchange rate between the underlying asset and the peg asset by using:
 ///          the price from a Chainlink price feed or a Redstone Oracle with one of them being used as main source and
@@ -26,17 +24,10 @@ contract FallbackCLRSOracleL2 is FluidOracleL2, FallbackCLRSOracle {
     /// @param sequencerUptimeFeed_   L2 sequencer uptime Chainlink feed
     constructor(
         string memory infoName_,
-        uint8 targetDecimals_,
         CLRSConstructorParams memory cLRSParams_,
         address sequencerUptimeFeed_
     )
-        FallbackCLRSOracle(
-            infoName_,
-            targetDecimals_,
-            cLRSParams_.mainSource,
-            cLRSParams_.chainlinkParams,
-            cLRSParams_.redstoneOracle
-        )
+        FallbackCLRSOracle(infoName_, cLRSParams_.mainSource, cLRSParams_.chainlinkParams, cLRSParams_.redstoneOracle)
         FluidOracleL2(sequencerUptimeFeed_)
     {}
 

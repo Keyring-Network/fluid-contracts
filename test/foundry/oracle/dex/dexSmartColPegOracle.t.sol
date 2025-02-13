@@ -12,8 +12,6 @@ import { IFluidOracle } from "../../../../contracts/oracle/fluidOracle.sol";
 import "forge-std/console2.sol";
 
 contract DexSmartColPegOracleTest is Test {
-    uint8 public constant SAMPLE_TARGET_DECIMALS = 20; // sample target decimals - doesn't matter in test
-
     address internal constant DEX_WBTC_CBBTC = 0x1d3e52a11B98Ed2AAB7eB0Bfe1cbB6525233204d;
     address internal constant FallbackCLRSOracle_CBBTC_USDC = 0x390421d1Fe8e238FFd9Ef86563CBF76F348CdD92; // USES BTC-USD
 
@@ -28,7 +26,6 @@ contract DexSmartColPegOracleTest is Test {
         oracle = new DexSmartColPegOracle(
             DexSmartColPegOracle.DexSmartColPegOracleParams(
                 "WBTC per 1 WBTC/CBBTC share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_WBTC_CBBTC,
                 true, // quote in token0, WBTC
                 IFluidOracle(address(0)),
@@ -60,7 +57,6 @@ contract DexSmartColPegOracleTest is Test {
         oracle = new DexSmartColPegOracle(
             DexSmartColPegOracle.DexSmartColPegOracleParams(
                 "USDC debt per 1 WBTC/CBBTC share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_WBTC_CBBTC,
                 false, // quote in token1, CBBTC
                 IFluidOracle(FallbackCLRSOracle_CBBTC_USDC),
@@ -82,8 +78,6 @@ contract DexSmartColPegOracleTest is Test {
 }
 
 contract DexSmartColPegOracleTestWEETH is Test {
-    uint8 public constant SAMPLE_TARGET_DECIMALS = 20; // sample target decimals - doesn't matter in test
-
     address internal constant DEX_WEETH_ETH = 0x86f874212335Af27C41cDb855C2255543d1499cE;
 
     DexSmartColPegOracle oracle;
@@ -95,7 +89,6 @@ contract DexSmartColPegOracleTestWEETH is Test {
         oracle = new DexSmartColPegOracle(
             DexSmartColPegOracle.DexSmartColPegOracleParams(
                 "WSTETH per 1 WEETH/ETH colShare",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_WEETH_ETH,
                 false, // quote in ETH token1
                 IFluidOracle(0x2F95631D59F564D5e2dD0c028d4DAF3B876D84Fd), // Wsteth contract rate

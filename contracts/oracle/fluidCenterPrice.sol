@@ -13,8 +13,6 @@ abstract contract FluidCenterPrice is IFluidCenterPrice, OracleError {
     // using a bytes32 because string can not be immutable.
     bytes32 private immutable _infoName;
 
-    uint8 internal constant _TARGET_DECIMALS = 27; // target decimals for center price and contract rates is always 27
-
     constructor(string memory infoName_) {
         if (bytes(infoName_).length > 32 || bytes(infoName_).length == 0) {
             revert FluidOracleError(ErrorTypes.FluidOracle__InvalidInfoName);
@@ -26,11 +24,6 @@ abstract contract FluidCenterPrice is IFluidCenterPrice, OracleError {
             infoNameBytes32_ := mload(add(infoName_, 32))
         }
         _infoName = infoNameBytes32_;
-    }
-
-    /// @inheritdoc IFluidCenterPrice
-    function targetDecimals() public pure virtual returns (uint8) {
-        return _TARGET_DECIMALS;
     }
 
     /// @inheritdoc IFluidCenterPrice

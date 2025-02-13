@@ -1,20 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.21;
 
-import { IFluidLiquidity } from "../../../liquidity/interfaces/iLiquidity.sol";
 import { Variables } from "./variables.sol";
 import { Structs } from "./structs.sol";
 import { FluidProtocolTypes } from "../../../libraries/fluidProtocolTypes.sol";
 import { Structs as VaultResolverStructs } from "../vault/structs.sol";
 import { IFluidVaultResolver } from "../vault/iVaultResolver.sol";
 import { IFluidVaultT1 } from "../../../protocols/vault/interfaces/iVaultT1.sol";
-import { LiquiditySlotsLink } from "../../../libraries/liquiditySlotsLink.sol";
-import { LiquidityCalcs } from "../../../libraries/liquidityCalcs.sol";
-import { BigMathMinified } from "../../../libraries/bigMathMinified.sol";
-
-interface TokenInterface {
-    function balanceOf(address) external view returns (uint);
-}
 
 /// @notice Resolver contract that helps in finding available token (liquidation) swaps available in Fluid VaultT1s.
 /// @dev    Note that on the same protocol, if "withAbsorb = true" is executed, this also consumes the swap
@@ -37,8 +29,8 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
     error FluidVaultLiquidationsResolver__InvalidParams();
 
     /// @notice constructor sets the immutable vault resolver address
-    constructor(IFluidVaultResolver vaultResolver_, IFluidLiquidity liquidity_) Variables(vaultResolver_, liquidity_) {
-        if (address(vaultResolver_) == address(0) || address(liquidity_) == address(0)) {
+    constructor(IFluidVaultResolver vaultResolver_) Variables(vaultResolver_) {
+        if (address(vaultResolver_) == address(0)) {
             revert FluidVaultLiquidationsResolver__AddressZero();
         }
     }
@@ -166,14 +158,11 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
 
         (address borrowToken_, address supplyToken_) = _getVaultTokens(protocol_);
         (SwapData memory withoutAbsorb_, SwapData memory withAbsorb_) = getVaultSwapData(protocol_);
-
-        swap_ = _getSwapAccountingForWithdrawable(
+        return
             Swap({
                 path: SwapPath({ protocol: protocol_, tokenIn: borrowToken_, tokenOut: supplyToken_ }),
                 data: _getBetterRatioSwapData(withoutAbsorb_, withAbsorb_)
-            }),
-            withAbsorb_.outAmt == 0 ? 0 : _getVaultT1Withdrawable(protocol_, supplyToken_)
-        );
+            });
     }
 
     /// @notice returns all available `swaps_` for multiple Fluid `vaults_` raw. Only returns non-zero swaps.
@@ -187,16 +176,10 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
             SwapData memory withAbsorb_;
             address borrowToken_;
             address supplyToken_;
-            uint256 withdrawable_;
             for (uint256 i; i < vaults_.length; ++i) {
                 (withoutAbsorb_, withAbsorb_) = getVaultSwapData(vaults_[i]);
                 if (withAbsorb_.inAmt == 0) {
                     // if with absorb is 0, then without absorb can only be 0 too
-                    continue;
-                }
-                (borrowToken_, supplyToken_) = _getVaultTokens(vaults_[i]);
-                withdrawable_ = _getVaultT1Withdrawable(vaults_[i], supplyToken_);
-                if (withdrawable_ == 0) {
                     continue;
                 }
                 ++nonZeroSwaps_;
@@ -209,20 +192,16 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
                     ++nonZeroSwaps_;
                 }
 
-                allSwaps_[i * 2] = _getSwapAccountingForWithdrawable(
-                    Swap({
-                        path: SwapPath({ protocol: vaults_[i], tokenIn: borrowToken_, tokenOut: supplyToken_ }),
-                        data: withoutAbsorb_
-                    }),
-                    withdrawable_
-                );
-                allSwaps_[i * 2 + 1] = _getSwapAccountingForWithdrawable(
-                    Swap({
-                        path: SwapPath({ protocol: vaults_[i], tokenIn: borrowToken_, tokenOut: supplyToken_ }),
-                        data: withAbsorb_
-                    }),
-                    withdrawable_
-                );
+                (borrowToken_, supplyToken_) = _getVaultTokens(vaults_[i]);
+
+                allSwaps_[i * 2] = Swap({
+                    path: SwapPath({ protocol: vaults_[i], tokenIn: borrowToken_, tokenOut: supplyToken_ }),
+                    data: withoutAbsorb_
+                });
+                allSwaps_[i * 2 + 1] = Swap({
+                    path: SwapPath({ protocol: vaults_[i], tokenIn: borrowToken_, tokenOut: supplyToken_ }),
+                    data: withAbsorb_
+                });
             }
 
             return _getNonZeroSwaps(allSwaps_, nonZeroSwaps_);
@@ -244,16 +223,11 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
             uint256 nonZeroSwaps_;
             SwapData memory withoutAbsorb_;
             SwapData memory withAbsorb_;
-            uint256 withdrawable_;
             for (uint256 i; i < paths_.length; ++i) {
                 (withoutAbsorb_, withAbsorb_) = getVaultSwapData(paths_[i].protocol);
 
                 if (withAbsorb_.inAmt == 0) {
                     // if with absorb is 0, then without absorb can only be 0 too
-                    continue;
-                }
-                withdrawable_ = _getVaultT1Withdrawable(paths_[i].protocol, paths_[i].tokenOut);
-                if (withdrawable_ == 0) {
                     continue;
                 }
                 ++nonZeroSwaps_;
@@ -266,15 +240,9 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
                     ++nonZeroSwaps_;
                 }
 
-                allSwaps_[i * 2] = _getSwapAccountingForWithdrawable(
-                    Swap({ path: paths_[i], data: withoutAbsorb_ }),
-                    withdrawable_
-                );
+                allSwaps_[i * 2] = Swap({ path: paths_[i], data: withoutAbsorb_ });
 
-                allSwaps_[i * 2 + 1] = _getSwapAccountingForWithdrawable(
-                    Swap({ path: paths_[i], data: withAbsorb_ }),
-                    withdrawable_
-                );
+                allSwaps_[i * 2 + 1] = Swap({ path: paths_[i], data: withAbsorb_ });
             }
 
             swaps_ = new Swap[](nonZeroSwaps_);
@@ -316,7 +284,6 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
             SwapData memory withoutAbsorb_;
             SwapData memory withAbsorb_;
             Swap memory swap_;
-            uint256 withdrawable_;
             for (uint256 i; i < vaults_.length; ++i) {
                 (withoutAbsorb_, withAbsorb_) = getVaultSwapData(vaults_[i]);
                 swap_ = Swap({
@@ -328,15 +295,12 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
                     // no swap available on this vault
                     continue;
                 }
-                (swap_.path.tokenIn, swap_.path.tokenOut) = _getVaultTokens(vaults_[i]);
-                withdrawable_ = _getVaultT1Withdrawable(swap_.path.protocol, swap_.path.tokenOut);
-                if (withdrawable_ == 0) {
-                    continue;
-                }
 
                 ++nonZeroSwaps_;
 
-                allSwaps_[i] = _getSwapAccountingForWithdrawable(swap_, withdrawable_);
+                (swap_.path.tokenIn, swap_.path.tokenOut) = _getVaultTokens(vaults_[i]);
+
+                allSwaps_[i] = swap_;
             }
 
             return _getNonZeroSwaps(allSwaps_, nonZeroSwaps_);
@@ -361,7 +325,6 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
             Swap memory swap_;
             SwapData memory withoutAbsorb_;
             SwapData memory withAbsorb_;
-            uint256 withdrawable_;
             for (uint256 i; i < paths_.length; ++i) {
                 (withoutAbsorb_, withAbsorb_) = getVaultSwapData(paths_[i].protocol);
                 swap_ = Swap({ path: paths_[i], data: _getBetterRatioSwapData(withoutAbsorb_, withAbsorb_) });
@@ -370,14 +333,10 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
                     // no swap available on this vault
                     continue;
                 }
-                withdrawable_ = _getVaultT1Withdrawable(swap_.path.protocol, swap_.path.tokenOut);
-                if (withdrawable_ == 0) {
-                    continue;
-                }
 
                 ++nonZeroSwaps_;
 
-                allSwaps_[i] = _getSwapAccountingForWithdrawable(swap_, withdrawable_);
+                allSwaps_[i] = swap_;
             }
 
             return _getNonZeroSwaps(allSwaps_, nonZeroSwaps_);
@@ -539,81 +498,6 @@ contract FluidVaultLiquidationResolver is Variables, Structs {
         uint256 targetApproxOutAmt_
     ) public returns (Swap[] memory filteredSwaps_, uint256 actualInAmt_, uint256 approxOutAmt_) {
         return _filterToTarget(swaps_, type(uint256).max, targetApproxOutAmt_);
-    }
-
-    function _getUserSupplyData(address user_, address token_) internal view returns (uint256) {
-        return
-            LIQUIDITY.readFromStorage(
-                LiquiditySlotsLink.calculateDoubleMappingStorageSlot(
-                    LiquiditySlotsLink.LIQUIDITY_USER_SUPPLY_DOUBLE_MAPPING_SLOT,
-                    user_,
-                    token_
-                )
-            );
-    }
-
-    function _getExchangePricesAndConfig(address token_) internal view returns (uint256) {
-        return
-            LIQUIDITY.readFromStorage(
-                LiquiditySlotsLink.calculateMappingStorageSlot(
-                    LiquiditySlotsLink.LIQUIDITY_EXCHANGE_PRICES_MAPPING_SLOT,
-                    token_
-                )
-            );
-    }
-
-    /// @dev get withdrawable amount at a certain T1 vault, which limits liquidations. Incl. balance check at Liquidity
-    function _getVaultT1Withdrawable(address vault_, address token_) internal view returns (uint256 withdrawable_) {
-        uint256 userSupplyData_ = _getUserSupplyData(vault_, token_);
-
-        if (userSupplyData_ == 0) {
-            return 0;
-        }
-
-        uint256 userSupply_ = BigMathMinified.fromBigNumber(
-            (userSupplyData_ >> LiquiditySlotsLink.BITS_USER_SUPPLY_AMOUNT) & LiquidityCalcs.X64,
-            LiquidityCalcs.DEFAULT_EXPONENT_SIZE,
-            LiquidityCalcs.DEFAULT_EXPONENT_MASK
-        );
-
-        // get updated expanded withdrawal limit
-        uint256 withdrawalLimit_ = LiquidityCalcs.calcWithdrawalLimitBeforeOperate(userSupplyData_, userSupply_);
-
-        if (userSupplyData_ & 1 == 1) {
-            uint256 exchangePricesAndConfig_ = _getExchangePricesAndConfig(token_);
-            if (exchangePricesAndConfig_ == 0) {
-                return 0;
-            }
-            (uint256 supplyExchangePrice_, ) = LiquidityCalcs.calcExchangePrices(exchangePricesAndConfig_);
-            // convert raw amounts to normal for withInterest mode
-            userSupply_ = (userSupply_ * supplyExchangePrice_) / EXCHANGE_PRICES_PRECISION;
-            withdrawalLimit_ = (withdrawalLimit_ * supplyExchangePrice_) / EXCHANGE_PRICES_PRECISION;
-        }
-
-        withdrawable_ = userSupply_ > withdrawalLimit_ ? userSupply_ - withdrawalLimit_ : 0;
-        uint256 balanceOf_ = token_ == NATIVE_TOKEN_ADDRESS
-            ? address(LIQUIDITY).balance
-            : TokenInterface(token_).balanceOf(address(LIQUIDITY));
-
-        withdrawable_ = balanceOf_ > withdrawable_ ? withdrawable_ : balanceOf_;
-    }
-
-    /// @dev limits a Swap liquidatable amount according to actually col side withdrawable amount
-    function _getSwapAccountingForWithdrawable(
-        Swap memory swap_,
-        uint256 withdrawable_
-    ) internal pure returns (Swap memory) {
-        if (swap_.data.outAmt == 0) {
-            return swap_;
-        }
-
-        if (withdrawable_ < swap_.data.outAmt) {
-            // reduce swap in and out amount to max withdrawable
-            swap_.data.inAmt = (swap_.data.inAmt * withdrawable_) / swap_.data.outAmt;
-            swap_.data.outAmt = withdrawable_;
-        }
-
-        return swap_;
     }
 
     /// @dev filters the `swaps_` to the point where either `targetInAmt_` or `targetOutAmt_` is reached.

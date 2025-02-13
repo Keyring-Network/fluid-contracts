@@ -4,6 +4,7 @@ pragma solidity 0.8.21;
 import { Variables } from "./variables.sol";
 import { Structs } from "./structs.sol";
 import { IFluidVaultFactory } from "../../../protocols/vault/interfaces/iVaultFactory.sol";
+import { Structs as VaultResolverStructs } from "../vault/structs.sol";
 import { IFluidVaultResolver } from "../vault/iVaultResolver.sol";
 import { IFluidVault } from "../../../protocols/vault/interfaces/iVault.sol";
 import { TickMath } from "../../../libraries/tickMath.sol";

@@ -22,7 +22,6 @@ contract DexSmartT4PegOracle is
 {
     struct DexSmartT4PegOracleParams {
         string infoName;
-        uint8 targetDecimals;
         address dexPool;
         bool quoteInToken0;
         uint256 pegBufferPercent;
@@ -35,7 +34,7 @@ contract DexSmartT4PegOracle is
     constructor(
         DexSmartT4PegOracleParams memory params_
     )
-        FluidOracle(params_.infoName, params_.targetDecimals)
+        FluidOracle(params_.infoName)
         DexOracleAdjustResult(params_.resultMultiplier, params_.resultDivisor)
         DexReservesFromLiquidityPeg(params_.dexPool, params_.quoteInToken0, params_.pegBufferPercent)
         DexConversionPriceFluidOracle(params_.reservesConversionParams)

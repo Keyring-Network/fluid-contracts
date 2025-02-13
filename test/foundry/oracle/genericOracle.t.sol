@@ -40,7 +40,7 @@ contract GenericOracleTest is OracleTestSuite {
             sourceType: GenericOracleStructs.SourceType.Chainlink
         });
 
-        oracle = new FluidGenericOracle(infoName, SAMPLE_TARGET_DECIMALS, oracleHopSources);
+        oracle = new FluidGenericOracle(infoName, oracleHopSources);
     }
 
     function test_getExchangeRate() public {
@@ -89,7 +89,7 @@ contract GenericOracle2Hops_OracleTest2 is OracleTestSuite {
             sourceType: GenericOracleStructs.SourceType.Chainlink
         });
 
-        oracle = new FluidGenericOracle(infoName, SAMPLE_TARGET_DECIMALS, oracleHopSources);
+        oracle = new FluidGenericOracle(infoName, oracleHopSources);
     }
 
     function test_getExchangeRate() public {
@@ -129,7 +129,7 @@ contract GenericOracle2Hops_OracleTest3 is OracleTestSuite {
             sourceType: GenericOracleStructs.SourceType.Chainlink
         });
 
-        oracle = new FluidGenericOracle(infoName, SAMPLE_TARGET_DECIMALS, oracleHopSources);
+        oracle = new FluidGenericOracle(infoName, oracleHopSources);
     }
 
     function test_getExchangeRate() public {
@@ -179,7 +179,7 @@ contract GenericOracle3Hops_OracleTest is OracleTestSuite {
             sourceType: GenericOracleStructs.SourceType.Chainlink
         });
 
-        oracle = new FluidGenericOracle(infoName, SAMPLE_TARGET_DECIMALS, oracleHopSources);
+        oracle = new FluidGenericOracle(infoName, oracleHopSources);
     }
 
     function test_getExchangeRate() public {
@@ -225,7 +225,7 @@ contract GenericOracle3Hops_OracleTest is OracleTestSuite {
             sourceType: GenericOracleStructs.SourceType.Chainlink
         });
 
-        oracle = new FluidGenericOracle(infoName, SAMPLE_TARGET_DECIMALS, oracleHopSources);
+        oracle = new FluidGenericOracle(infoName, oracleHopSources);
 
         MOCK_CHAINLINK_FEED.setExchangeRate(0);
 
@@ -255,7 +255,6 @@ contract GenericOracleUniV3Checked_OracleTest is OracleTestSuite {
 
         oracle = new FluidGenericUniV3CheckedOracle(
             infoName,
-            SAMPLE_TARGET_DECIMALS,
             oracleHopSources,
             UniV3CheckCLRSOracle.UniV3CheckCLRSConstructorParams({
                 uniV3Params: UniV3OracleImpl.UniV3ConstructorParams({

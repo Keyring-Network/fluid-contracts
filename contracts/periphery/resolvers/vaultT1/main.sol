@@ -338,10 +338,6 @@ contract FluidVaultT1Resolver is Helpers {
 
             supplyLimitRaw_ = LiquidityCalcs.calcWithdrawalLimitBeforeOperate(userSupplyLiquidityData_, userSupply_);
 
-            userSupply_ =
-                (userSupply_ * exchangePricesAndRates_.liquiditySupplyExchangePrice) /
-                EXCHANGE_PRICES_PRECISION;
-
             // liquiditySupplyExchangePrice is EXCHANGE_PRICES_PRECISION in case of smart col
             limitsAndAvailability_.withdrawLimit =
                 (supplyLimitRaw_ * exchangePricesAndRates_.liquiditySupplyExchangePrice) /

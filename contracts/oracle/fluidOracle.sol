@@ -13,20 +13,10 @@ abstract contract FluidOracle is IFluidOracle, OracleError {
     // using a bytes32 because string can not be immutable.
     bytes32 private immutable _infoName;
 
-    /// @dev target decimals of the oracle when scaling to 1e27. E.g. for ETH / USDC it would be 15
-    /// because diff of ETH decimals to 1e27 is 9, and USDC has 6 decimals, so 6+9 = 15, e.g. 2029,047772120364926
-    /// For USDC / ETH: 21 + 18 = 39, e.g. 0,000492842018675092636829357843847601646
-    uint8 private immutable _targetDecimals;
-
-    constructor(string memory infoName_, uint8 targetDecimals_) {
+    constructor(string memory infoName_) {
         if (bytes(infoName_).length > 32 || bytes(infoName_).length == 0) {
             revert FluidOracleError(ErrorTypes.FluidOracle__InvalidInfoName);
         }
-
-        if (targetDecimals_ < 15 || targetDecimals_ > 39) {
-            revert FluidOracleError(ErrorTypes.GenericOracle__InvalidParams);
-        }
-        _targetDecimals = targetDecimals_;
 
         // convert string to bytes32
         bytes32 infoNameBytes32_;
@@ -34,11 +24,6 @@ abstract contract FluidOracle is IFluidOracle, OracleError {
             infoNameBytes32_ := mload(add(infoName_, 32))
         }
         _infoName = infoNameBytes32_;
-    }
-
-    /// @inheritdoc IFluidOracle
-    function targetDecimals() external view returns (uint8) {
-        return _targetDecimals;
     }
 
     /// @inheritdoc IFluidOracle

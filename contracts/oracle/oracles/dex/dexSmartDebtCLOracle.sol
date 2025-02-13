@@ -23,7 +23,6 @@ contract DexSmartDebtCLOracle is
 {
     struct DexSmartDebtCLOracleParams {
         string infoName;
-        uint8 targetDecimals;
         address dexPool;
         bool quoteInToken0;
         IFluidOracle colDebtOracle;
@@ -38,7 +37,7 @@ contract DexSmartDebtCLOracle is
     constructor(
         DexSmartDebtCLOracleParams memory params_
     )
-        FluidOracle(params_.infoName, params_.targetDecimals)
+        FluidOracle(params_.infoName)
         DexOracleAdjustResult(params_.resultMultiplier, params_.resultDivisor)
         DexReservesFromPEX(params_.dexPool, params_.quoteInToken0)
         DexColDebtPriceFluidOracle(params_.colDebtOracle, params_.colDebtInvert)

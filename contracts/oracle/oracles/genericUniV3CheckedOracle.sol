@@ -15,10 +15,9 @@ import { UniV3CheckedSourceReader } from "../sourceReaders/uniV3CheckedSourceRea
 contract FluidGenericUniV3CheckedOracle is FluidGenericOracleBase, UniV3CheckedSourceReader {
     constructor(
         string memory infoName_,
-        uint8 targetDecimals_,
         OracleHopSource[] memory sources_,
         UniV3CheckCLRSConstructorParams memory uniV3Params_
-    ) FluidGenericOracleBase(sources_) UniV3CheckedSourceReader(infoName_, targetDecimals_, uniV3Params_) {
+    ) FluidGenericOracleBase(sources_) UniV3CheckedSourceReader(infoName_, uniV3Params_) {
         uint256 uniV3SourcesCount_;
         if (sources_[0].sourceType == SourceType.UniV3Checked) uniV3SourcesCount_++;
         if (sources_.length > 1 && sources_[1].sourceType == SourceType.UniV3Checked) uniV3SourcesCount_++;

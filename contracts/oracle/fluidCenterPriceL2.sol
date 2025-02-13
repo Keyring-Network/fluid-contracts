@@ -14,8 +14,6 @@ abstract contract FluidCenterPriceL2 is IFluidCenterPrice, OracleError {
     // using a bytes32 because string can not be immutable.
     bytes32 private immutable _infoName;
 
-    uint8 internal constant _TARGET_DECIMALS = 27; // target decimals for center price and contract rates is always 27
-
     /// @dev Chainlink L2 Sequencer Uptime feed to detect sequencer outages
     IChainlinkAggregatorV3 internal _SEQUENCER_ORACLE;
     /// @dev max time period until oracle assumes normal behavior after a sequencer outage.
@@ -89,11 +87,6 @@ abstract contract FluidCenterPriceL2 is IFluidCenterPrice, OracleError {
         if (!gracePeriodPassed_) {
             revert FluidOracleError(ErrorTypes.FluidOracleL2__SequencerOutage);
         }
-    }
-
-    /// @inheritdoc IFluidCenterPrice
-    function targetDecimals() public pure virtual returns (uint8) {
-        return _TARGET_DECIMALS;
     }
 
     /// @inheritdoc IFluidCenterPrice

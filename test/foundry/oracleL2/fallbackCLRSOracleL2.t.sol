@@ -28,7 +28,6 @@ contract FallbackCLRS_Chainlink2Hops_OracleL2Test is FallbackCLRS_Chainlink2Hops
 
         oracle = new FallbackCLRSOracleL2(
             infoName,
-            SAMPLE_TARGET_DECIMALS,
             FallbackCLRSOracleL2.CLRSConstructorParams({
                 mainSource: 1, // mainsource = chainlink
                 chainlinkParams: ChainlinkStructs.ChainlinkConstructorParams({
@@ -70,7 +69,6 @@ contract FallbackCLRS_Chainlink2Hops_OracleL2Test2 is FallbackCLRS_Chainlink2Hop
 
         oracle = new FallbackCLRSOracleL2(
             infoName,
-            SAMPLE_TARGET_DECIMALS,
             FallbackCLRSOracleL2.CLRSConstructorParams({
                 mainSource: 1, // mainsource = chainlink
                 chainlinkParams: ChainlinkStructs.ChainlinkConstructorParams({
@@ -112,7 +110,6 @@ contract FallbackCLRS_Chainlink2Hops_OracleL2Test3 is FallbackCLRS_Chainlink2Hop
 
         oracle = new FallbackCLRSOracleL2(
             infoName,
-            SAMPLE_TARGET_DECIMALS,
             FallbackCLRSOracleL2.CLRSConstructorParams({
                 mainSource: 1, // mainsource = chainlink
                 chainlinkParams: ChainlinkStructs.ChainlinkConstructorParams({
@@ -154,7 +151,6 @@ contract FallbackCLRS_Chainlink3Hops_OracleL2Test is FallbackCLRS_Chainlink3Hops
 
         oracle = new FallbackCLRSOracleL2(
             infoName,
-            SAMPLE_TARGET_DECIMALS,
             FallbackCLRSOracleL2.CLRSConstructorParams({
                 mainSource: 1, // mainsource = chainlink
                 chainlinkParams: ChainlinkStructs.ChainlinkConstructorParams({

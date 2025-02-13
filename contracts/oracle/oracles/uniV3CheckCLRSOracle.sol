@@ -7,8 +7,6 @@ import { UniV3OracleImpl } from "../implementations/uniV3OracleImpl.sol";
 import { ErrorTypes } from "../errorTypes.sol";
 import { OracleUtils } from "../libraries/oracleUtils.sol";
 
-/// @DEV DEPRECATED. USE GENERIC ORACLE INSTEAD. WILL BE REMOVED SOON.
-
 /// @title   UniswapV3 checked against Chainlink / Redstone Oracle. Either one reported as exchange rate.
 /// @notice  Gets the exchange rate between the underlying asset and the peg asset by using:
 ///          the price from a UniV3 pool (compared against 3 TWAPs) and (optionally) comparing it against a Chainlink
@@ -55,12 +53,11 @@ contract UniV3CheckCLRSOracle is FluidOracle, UniV3OracleImpl, FallbackOracleImp
 
     constructor(
         string memory infoName_,
-        uint8 targetDecimals_,
         UniV3CheckCLRSConstructorParams memory params_
     )
         UniV3OracleImpl(params_.uniV3Params)
         FallbackOracleImpl(params_.fallbackMainSource, params_.chainlinkParams, params_.redstoneOracle)
-        FluidOracle(infoName_, targetDecimals_)
+        FluidOracle(infoName_)
     {
         if (
             params_.rateSource < 1 ||

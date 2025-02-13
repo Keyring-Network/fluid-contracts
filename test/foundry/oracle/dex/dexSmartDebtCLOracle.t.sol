@@ -18,8 +18,6 @@ import { MockChainlinkFeed } from "../mocks/mockChainlinkFeed.sol";
 import "forge-std/console2.sol";
 
 contract DexSmartDebtCLOracleTest is Test {
-    uint8 public constant SAMPLE_TARGET_DECIMALS = 20; // sample target decimals - doesn't matter in test
-
     address internal constant DEX_USDC_ETH = 0x2886a01a0645390872a9eb99dAe1283664b0c524;
     address internal constant UniV3CheckCLRSOracle_ETH_USDC = 0x5b2860C6D6F888319C752aaCDaf8165C21095E3a;
 
@@ -68,7 +66,6 @@ contract DexSmartDebtCLOracleTest is Test {
         oracle = new DexSmartDebtCLOracle(
             DexSmartDebtCLOracle.DexSmartDebtCLOracleParams(
                 "USDC/ETH debt sh. per 1 USDC",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(0)),
@@ -109,7 +106,6 @@ contract DexSmartDebtCLOracleTest is Test {
         oracle = new DexSmartDebtCLOracle(
             DexSmartDebtCLOracle.DexSmartDebtCLOracleParams(
                 "USDC/ETH debt sh. per 1 USDC",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 false, // quote in ETH (token1)
                 IFluidOracle(address(0)),
@@ -138,8 +134,6 @@ contract DexSmartDebtCLOracleTest is Test {
 }
 
 contract DexSmartDebtCLCombinedOracleTest is Test {
-    uint8 public constant SAMPLE_TARGET_DECIMALS = 20; // sample target decimals - doesn't matter in test
-
     address internal constant DEX_USDC_ETH = 0x2886a01a0645390872a9eb99dAe1283664b0c524;
     address internal constant UniV3CheckCLRSOracle_ETH_USDC = 0x5b2860C6D6F888319C752aaCDaf8165C21095E3a;
 
@@ -214,7 +208,6 @@ contract DexSmartDebtCLCombinedOracleTest is Test {
         DexSmartColCLOracle smartColOracle = new DexSmartColCLOracle(
             DexSmartColCLOracle.DexSmartColCLOracleParams(
                 "USDC per 1 USDC/ETH col share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(0)),
@@ -231,7 +224,6 @@ contract DexSmartDebtCLCombinedOracleTest is Test {
         oracle = new DexSmartDebtCLOracle(
             DexSmartDebtCLOracle.DexSmartDebtCLOracleParams(
                 "USDC/ETH debt sh. per 1 USDC",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(smartColOracle)),
@@ -279,7 +271,6 @@ contract DexSmartDebtCLCombinedOracleTest is Test {
         DexSmartColCLOracle smartColOracle = new DexSmartColCLOracle(
             DexSmartColCLOracle.DexSmartColCLOracleParams(
                 "USDC per 1 USDC/ETH col share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(0)),
@@ -301,7 +292,6 @@ contract DexSmartDebtCLCombinedOracleTest is Test {
         oracle = new DexSmartDebtCLOracle(
             DexSmartDebtCLOracle.DexSmartDebtCLOracleParams(
                 "USDC/ETH debt sh. per 1 USDC",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(smartColOracle)),
@@ -334,7 +324,6 @@ contract DexSmartDebtCLCombinedOracleTest is Test {
         DexSmartColCLOracle smartColOracle = new DexSmartColCLOracle(
             DexSmartColCLOracle.DexSmartColCLOracleParams(
                 "USDC per 1 USDC/ETH col share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(0)),
@@ -358,7 +347,6 @@ contract DexSmartDebtCLCombinedOracleTest is Test {
         oracle = new DexSmartDebtCLOracle(
             DexSmartDebtCLOracle.DexSmartDebtCLOracleParams(
                 "USDC/ETH debt sh. per 1 USDC",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(smartColOracle)),
@@ -389,7 +377,6 @@ contract DexSmartDebtCLCombinedOracleTest is Test {
         DexSmartColCLOracle smartColOracle = new DexSmartColCLOracle(
             DexSmartColCLOracle.DexSmartColCLOracleParams(
                 "USDC per 1 USDC/ETH col share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(0)),
@@ -413,7 +400,6 @@ contract DexSmartDebtCLCombinedOracleTest is Test {
         oracle = new DexSmartDebtCLOracle(
             DexSmartDebtCLOracle.DexSmartDebtCLOracleParams(
                 "USDC/ETH debt sh. per 1 USDC",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(smartColOracle)),
@@ -446,7 +432,6 @@ contract DexSmartDebtCLCombinedOracleTest is Test {
         DexSmartColCLOracle smartColOracle = new DexSmartColCLOracle(
             DexSmartColCLOracle.DexSmartColCLOracleParams(
                 "USDC per 1 USDC/ETH col share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(0)),
@@ -470,7 +455,6 @@ contract DexSmartDebtCLCombinedOracleTest is Test {
         oracle = new DexSmartDebtCLOracle(
             DexSmartDebtCLOracle.DexSmartDebtCLOracleParams(
                 "USDC/ETH debt sh. per 1 USDC",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(smartColOracle)),

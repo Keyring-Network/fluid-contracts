@@ -14,9 +14,4 @@ interface IFluidOracle {
 
     /// @notice helper string to easily identify the oracle. E.g. token symbols
     function infoName() external view returns (string memory);
-
-    /// @notice target decimals of the returned oracle rate when scaling to 1e27. E.g. for ETH / USDC it would be 15
-    /// because diff of ETH decimals to 1e27 is 9, and USDC has 6 decimals, so 6+9 = 15, e.g. 2029,047772120364926
-    /// For USDC / ETH: 21 + 18 = 39, e.g. 0,000492842018675092636829357843847601646
-    function targetDecimals() external view returns (uint8);
 }

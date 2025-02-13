@@ -4,8 +4,6 @@ pragma solidity 0.8.21;
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 
-import { Structs as AdminModuleStructs } from "../../../../contracts/liquidity/adminModule/structs.sol";
-import { FluidLiquidityAdminModule } from "../../../../contracts/liquidity/adminModule/main.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { FluidVaultLiquidationResolver } from "../../../../contracts/periphery/resolvers/vaultLiquidation/main.sol";
 import { Structs } from "../../../../contracts/periphery/resolvers/vaultLiquidation/structs.sol";
@@ -63,10 +61,7 @@ abstract contract FluidVaultLiquidationResolverBaseTest is Test {
 
         // constructor params
         // IFluidVaultResolver vaultResolver_
-        resolver = new FluidVaultLiquidationResolver(
-            IFluidVaultResolver(address(vaultResolver)),
-            IFluidLiquidity(address(LIQUIDITY))
-        );
+        resolver = new FluidVaultLiquidationResolver(IFluidVaultResolver(address(vaultResolver)));
 
         // add some test deposit to WSTETH_USDC vault v2
         vm.startPrank(WSTETH_WHALE);
@@ -75,35 +70,6 @@ abstract contract FluidVaultLiquidationResolverBaseTest is Test {
         IFluidVaultT1(VAULT_WSTETH_USDC_V2).operate(0, 40 ether, 100_000 * 1e6, WSTETH_WHALE);
         IFluidVaultT1(VAULT_WSTETH_USDC_V2).operate(0, 35 ether, 100_000 * 1e6, WSTETH_WHALE);
         vm.stopPrank();
-
-        // set withdraw limit to very wide
-        AdminModuleStructs.UserSupplyConfig[] memory userSupplyConfigs_ = new AdminModuleStructs.UserSupplyConfig[](3);
-        userSupplyConfigs_[0] = AdminModuleStructs.UserSupplyConfig({
-            user: address(VAULT_WSTETH_USDC_V2),
-            token: address(WSTETH),
-            mode: 1,
-            expandPercent: 10000,
-            expandDuration: 10,
-            baseWithdrawalLimit: 30 ether
-        });
-        userSupplyConfigs_[1] = AdminModuleStructs.UserSupplyConfig({
-            user: address(VAULT_WSTETH_USDC_V1),
-            token: address(WSTETH),
-            mode: 1,
-            expandPercent: 10000,
-            expandDuration: 10,
-            baseWithdrawalLimit: 30 ether
-        });
-        userSupplyConfigs_[2] = AdminModuleStructs.UserSupplyConfig({
-            user: address(Vault_WEETH_WSTETH_V1),
-            token: address(WEETH),
-            mode: 1,
-            expandPercent: 10000,
-            expandDuration: 10,
-            baseWithdrawalLimit: 30 ether
-        });
-        vm.prank(GOVERNANCE);
-        FluidLiquidityAdminModule(address(LIQUIDITY)).updateUserSupplyConfigs(userSupplyConfigs_);
     }
 
     function _reduceVaultOraclePrice(address vault, uint256 reductionInPercent) internal {
@@ -226,7 +192,6 @@ abstract contract FluidVaultLiquidationResolverBaseTest is Test {
 contract FluidVaultLiquidationResolverPathsTest is FluidVaultLiquidationResolverBaseTest {
     function test_deployment() public {
         assertEq(address(resolver.VAULT_RESOLVER()), address(vaultResolver));
-        assertEq(address(resolver.LIQUIDITY()), address(LIQUIDITY));
     }
 
     function test_getAllSwapPaths() public {
@@ -457,9 +422,6 @@ contract FluidVaultLiquidationResolverSwapDataTest is FluidVaultLiquidationResol
 
 contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolverBaseTest {
     function test_getSwapForProtocol() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         // assert initially no swap available
         Structs.Swap memory swap = resolver.getSwapForProtocol(VAULT_WSTETH_USDC_V1);
         assertEq(swap.data.inAmt, 0);
@@ -481,9 +443,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getSwapForProtocol_WhenWithAbsorbLiquidityZero() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         Structs.Swap memory swap = resolver.getSwapForProtocol(Vault_WEETH_WSTETH_V1);
         Structs.Swap[] memory swaps = new Structs.Swap[](1);
         swaps[0] = swap;
@@ -491,9 +450,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getVaultsSwapRaw() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         address[] memory vaults = new address[](2);
         vaults[0] = VAULT_WSTETH_USDC_V1;
         vaults[1] = VAULT_WSTETH_USDC_V2;
@@ -509,9 +465,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getVaultsSwap() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         address[] memory vaults = new address[](2);
         vaults[0] = VAULT_WSTETH_USDC_V1;
         vaults[1] = VAULT_WSTETH_USDC_V2;
@@ -527,9 +480,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_test_getVaultsSwapRaw_WhenWithAbsorbLiquidityZero() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         address[] memory vaults = new address[](3);
         vaults[0] = VAULT_WSTETH_USDC_V1;
         vaults[1] = VAULT_WSTETH_USDC_V2;
@@ -540,9 +490,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_test_getVaultsSwap_WhenWithAbsorbLiquidityZero() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         address[] memory vaults = new address[](3);
         vaults[0] = VAULT_WSTETH_USDC_V1;
         vaults[1] = VAULT_WSTETH_USDC_V2;
@@ -553,9 +500,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getAllVaultsSwapRaw() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         Structs.Swap[] memory swaps = resolver.getAllVaultsSwapRaw();
         _verifyWeethWstethVaultSwap(swaps);
 
@@ -578,9 +522,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getAllVaultsSwap() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         Structs.Swap[] memory swaps = resolver.getAllVaultsSwap();
         _verifyWeethWstethVaultSwap(swaps);
 
@@ -600,9 +541,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getSwapsForPathsRaw_all() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         Structs.SwapPath[] memory paths = resolver.getAllSwapPaths();
         Structs.Swap[] memory swaps = resolver.getSwapsForPathsRaw(paths);
         _verifyWeethWstethVaultSwap(swaps);
@@ -626,9 +564,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getSwapsForPaths_all() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         Structs.SwapPath[] memory paths = resolver.getAllSwapPaths();
         Structs.Swap[] memory swaps = resolver.getSwapsForPaths(paths);
         _verifyWeethWstethVaultSwap(swaps);
@@ -649,9 +584,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getSwapsForPathsRaw_specific() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         Structs.SwapPath[] memory paths = resolver.getSwapPaths(WSTETH, WEETH);
         Structs.Swap[] memory swaps = resolver.getSwapsForPathsRaw(paths);
         _verifyWeethWstethVaultSwap(swaps);
@@ -664,9 +596,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getSwapsForPaths_specific() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         Structs.SwapPath[] memory paths = resolver.getSwapPaths(WSTETH, WEETH);
         Structs.Swap[] memory swaps = resolver.getSwapsForPaths(paths);
         _verifyWeethWstethVaultSwap(swaps);
@@ -679,9 +608,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getSwapsForPathsRaw_any() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         address[] memory tokensIn = new address[](3);
         tokensIn[0] = ETH;
         tokensIn[1] = WSTETH;
@@ -715,9 +641,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getSwapsForPaths_any() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         address[] memory tokensIn = new address[](3);
         tokensIn[0] = ETH;
         tokensIn[1] = WSTETH;
@@ -748,9 +671,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getSwapsRaw() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         Structs.Swap[] memory swaps = resolver.getSwapsRaw(WSTETH, WEETH);
         _verifyWeethWstethVaultSwap(swaps);
 
@@ -765,9 +685,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getSwaps() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         Structs.Swap[] memory swaps = resolver.getSwaps(WSTETH, WEETH);
         _verifyWeethWstethVaultSwap(swaps);
 
@@ -782,9 +699,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getSwapsRaw_USDC_ETH() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         // assert initially no swap available
         Structs.Swap[] memory swaps = resolver.getSwapsRaw(USDC, WSTETH);
         assertEq(swaps.length, 0);
@@ -865,9 +779,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getAnySwapsRaw() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         address[] memory tokensIn = new address[](3);
         tokensIn[0] = ETH;
         tokensIn[1] = WSTETH;
@@ -900,9 +811,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
     }
 
     function test_getAnySwaps() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         address[] memory tokensIn = new address[](3);
         tokensIn[0] = ETH;
         tokensIn[1] = WSTETH;
@@ -934,9 +842,6 @@ contract FluidVaultLiquidationResolverSwapsTest is FluidVaultLiquidationResolver
 
 contract FluidVaultLiquidationResolverSwapTxTest is FluidVaultLiquidationResolverBaseTest {
     function test_getSwapTx() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         Structs.Swap[] memory swaps = resolver.getSwapsRaw(WSTETH, WEETH);
         _verifyWeethWstethVaultSwap(swaps);
 
@@ -1039,110 +944,6 @@ contract FluidVaultLiquidationResolverSwapTxTest is FluidVaultLiquidationResolve
     }
 }
 
-contract FluidVaultLiquidationResolverSwapsWithLimitLimitedTest is FluidVaultLiquidationResolverBaseTest {
-    address internal constant Vault_ETH_WBTC = 0x991416539E9DA46db233bCcbaEA38C4f852776D4;
-    address internal constant NATIVE_TOKEN_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    FluidLiquidityResolver liquidityResolver;
-
-    function setUp() public virtual override {
-        vm.createSelectFork(vm.envString("MAINNET_RPC_URL"));
-        vm.rollFork(21765181);
-
-        // deploy resolver dependencies newest state
-        liquidityResolver = new FluidLiquidityResolver(LIQUIDITY);
-        vaultResolver = new FluidVaultResolver(address(VAULT_FACTORY), address(liquidityResolver));
-
-        // constructor params
-        // IFluidVaultResolver vaultResolver_
-        resolver = new FluidVaultLiquidationResolver(
-            IFluidVaultResolver(address(vaultResolver)),
-            IFluidLiquidity(address(LIQUIDITY))
-        );
-    }
-
-    function test_getSwapForProtocolWhenWithdrawLimit_Limited() public {
-        Structs.Swap memory swap = resolver.getSwapForProtocol(Vault_ETH_WBTC);
-        assertEq(swap.data.inAmt, 1195);
-        assertEq(swap.data.outAmt, 460525933448233);
-
-        (FluidLiquidityResolver.UserSupplyData memory vaultData, ) = liquidityResolver.getUserSupplyData(
-            Vault_ETH_WBTC,
-            NATIVE_TOKEN_ADDRESS
-        );
-        assertEq(vaultData.withdrawable, swap.data.outAmt);
-    }
-}
-
-contract FluidVaultLiquidationResolverSwapsWithLimitAvailableTest is FluidVaultLiquidationResolverBaseTest {
-    address internal constant Vault_ETH_WBTC = 0x991416539E9DA46db233bCcbaEA38C4f852776D4;
-    address internal constant NATIVE_TOKEN_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    FluidLiquidityResolver liquidityResolver;
-
-    function setUp() public virtual override {
-        vm.createSelectFork(vm.envString("MAINNET_RPC_URL"));
-        vm.rollFork(21766528);
-
-        // deploy resolver dependencies newest state
-        liquidityResolver = new FluidLiquidityResolver(LIQUIDITY);
-        vaultResolver = new FluidVaultResolver(address(VAULT_FACTORY), address(liquidityResolver));
-
-        // constructor params
-        // IFluidVaultResolver vaultResolver_
-        resolver = new FluidVaultLiquidationResolver(
-            IFluidVaultResolver(address(vaultResolver)),
-            IFluidLiquidity(address(LIQUIDITY))
-        );
-    }
-
-    function test_getSwapForProtocolWhenWithdrawLimit_Available() public {
-        // at block when instant expansion was executed, liquidation should be available now
-        Structs.Swap memory swap = resolver.getSwapForProtocol(Vault_ETH_WBTC);
-        assertEq(swap.data.inAmt, 799324406);
-        assertEq(swap.data.outAmt, 307941712764882225863);
-
-        (FluidLiquidityResolver.UserSupplyData memory vaultData, ) = liquidityResolver.getUserSupplyData(
-            Vault_ETH_WBTC,
-            NATIVE_TOKEN_ADDRESS
-        );
-        assertGe(vaultData.withdrawableUntilLimit, swap.data.outAmt);
-    }
-}
-
-contract FluidVaultLiquidationResolverSwapsWithLimitAvailableFullTest is FluidVaultLiquidationResolverBaseTest {
-    address internal constant Vault_ETH_WBTC = 0x991416539E9DA46db233bCcbaEA38C4f852776D4;
-    address internal constant NATIVE_TOKEN_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    FluidLiquidityResolver liquidityResolver;
-
-    function setUp() public virtual override {
-        vm.createSelectFork(vm.envString("MAINNET_RPC_URL"));
-        vm.rollFork(21766529);
-
-        // deploy resolver dependencies newest state
-        liquidityResolver = new FluidLiquidityResolver(LIQUIDITY);
-        vaultResolver = new FluidVaultResolver(address(VAULT_FACTORY), address(liquidityResolver));
-
-        // constructor params
-        // IFluidVaultResolver vaultResolver_
-        resolver = new FluidVaultLiquidationResolver(
-            IFluidVaultResolver(address(vaultResolver)),
-            IFluidLiquidity(address(LIQUIDITY))
-        );
-    }
-
-    function test_getSwapForProtocolWhenWithdrawLimit_AvailableFull() public {
-        // at block after when instant expansion was executed and liquidation already triggered to below base limit, FULL liquidation should be available now
-        Structs.Swap memory swap = resolver.getSwapForProtocol(Vault_ETH_WBTC);
-        assertEq(swap.data.inAmt, 689);
-        assertEq(swap.data.outAmt, 265488431040374);
-
-        (FluidLiquidityResolver.UserSupplyData memory vaultData, ) = liquidityResolver.getUserSupplyData(
-            Vault_ETH_WBTC,
-            NATIVE_TOKEN_ADDRESS
-        );
-        assertGt(vaultData.withdrawableUntilLimit, swap.data.outAmt);
-    }
-}
-
 contract FluidVaultLiquidationResolverExactTest is FluidVaultLiquidationResolverBaseTest {
     function test_exactInput() public {
         // assert initially no swap available
@@ -1190,9 +991,6 @@ contract FluidVaultLiquidationResolverExactTest is FluidVaultLiquidationResolver
     }
 
     function test_exactInput_WhenNoAbsorbLiquidity() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         (Structs.Swap[] memory swaps, uint256 actualInAmt, uint256 outAmt) = resolver.exactInput(
             WSTETH,
             WEETH,
@@ -1316,9 +1114,6 @@ contract FluidVaultLiquidationResolverExactTest is FluidVaultLiquidationResolver
     }
 
     function test_approxOutput_WhenNoAbsorbLiquidity() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         (Structs.Swap[] memory swaps, uint256 inAmt, uint256 actualOutAmt) = resolver.approxOutput(
             WSTETH,
             WEETH,
@@ -1442,9 +1237,6 @@ contract FluidVaultLiquidationResolverCombiTest is FluidVaultLiquidationResolver
     address internal constant NATIVE_TOKEN_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     function test_combinationActions() public {
-        vm.skip(true); // This will skip the tests, they are targeted for with Zircuit and SUSDS rehypo logic. To execute
-        // on the main-mainnet branch
-
         // assert initially only weETH / Wsteth swap available
         Structs.Swap[] memory swaps = resolver.getAllVaultsSwapRaw();
         _verifyWeethWstethVaultSwap(swaps);

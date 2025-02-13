@@ -12,8 +12,6 @@ import { IFluidOracle } from "../../../../contracts/oracle/fluidOracle.sol";
 import "forge-std/console2.sol";
 
 contract DexSmartT4PegOracleTest is Test {
-    uint8 public constant SAMPLE_TARGET_DECIMALS = 20; // sample target decimals - doesn't matter in test
-
     address internal constant DEX_USDC_USDT = 0x085B07A30381F3Cc5A4250e10E4379d465b770ac;
     address internal constant UniV3CheckCLRSOracle_ETH_USDC = 0x5b2860C6D6F888319C752aaCDaf8165C21095E3a;
     address internal constant FallbackCLRSOracle_WBTC_USDC = 0x131BA983Ab640Ce291B98694b3Def4288596cD09;
@@ -34,7 +32,6 @@ contract DexSmartT4PegOracleTest is Test {
         oracle = new DexSmartT4PegOracle(
             DexSmartT4PegOracle.DexSmartT4PegOracleParams(
                 "WSTETH/ETH shares debt per 1 col",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_WSTETH_ETH,
                 false, // quote in ETH (token1)
                 1000, // 10000 = 1%; 100 = 0.01%
@@ -61,7 +58,6 @@ contract DexSmartT4PegOracleTest is Test {
         oracle = new DexSmartT4PegOracle(
             DexSmartT4PegOracle.DexSmartT4PegOracleParams(
                 "GHO/USDC debt sh. per 1 col sh.",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_GHO_USDC,
                 false, // quote in USDC (token1)
                 1000, // 10000 = 1%; 100 = 0.01%
@@ -78,7 +74,6 @@ contract DexSmartT4PegOracleTest is Test {
         oracle = new DexSmartT4PegOracle(
             DexSmartT4PegOracle.DexSmartT4PegOracleParams(
                 "GHO/USDC debt sh. per 1 col sh.",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_GHO_USDC,
                 true, // quote in GHO (token0)
                 1000, // 10000 = 1%; 100 = 0.01%

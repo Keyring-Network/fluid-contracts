@@ -41,7 +41,7 @@ abstract contract Constants {
     uint256 public immutable UPDATE_FEE_TRIGGER_BUFFER = 10; // e.g. 1e4 -> 1%
 
     // USDC-USDT dex
-    address public immutable DEX;
+    address internal immutable DEX;
 
     IFluidReserveContract public immutable RESERVE_CONTRACT;
 }
@@ -67,13 +67,10 @@ abstract contract DynamicFee is Constants, Error, Events {
         MAX_DEVIATION = _maxDeviation;
     }
 
-    function _getDeviationFromPrice(uint256 price_) internal pure returns (uint256) {
-        // Absolute deviation from 1e27
-        return price_ > SCALE ? price_ - SCALE : SCALE - price_;
-    }
-
     function dynamicFeeFromPrice(uint256 price) external view returns (uint256) {
-        return _computeDynamicFee(_getDeviationFromPrice(price));
+        // Absolute deviation from 1e27
+        uint256 deviation = price > SCALE ? price - SCALE : SCALE - price;
+        return _computeDynamicFee(deviation);
     }
 
     function dynamicFeeFromDeviation(uint256 deviation) external view returns (uint256) {
@@ -144,26 +141,22 @@ contract FluidDexFeeHandler is DynamicFee {
         DEX = dex_;
     }
 
-    /// @notice returns the fee for the dex
     function getDexFee() public view returns (uint256 fee_) {
         uint256 dexVariables2_ = IFluidDexT1(DEX).readFromStorage(bytes32(DexSlotsLink.DEX_VARIABLES2_SLOT));
         return (dexVariables2_ >> 2) & X17;
     }
 
-    /// @notice returns the revenue cut for the dex
     function getDexRevenueCut() public view returns (uint256 revenueCut_) {
         uint256 dexVariables2_ = IFluidDexT1(DEX).readFromStorage(bytes32(DexSlotsLink.DEX_VARIABLES2_SLOT));
         return (dexVariables2_ >> 19) & X7;
     }
 
-    /// @notice returns the fee and revenue cut for the dex
     function getDexFeeAndRevenueCut() public view returns (uint256 fee_, uint256 revenueCut_) {
         uint256 dexVariables2_ = IFluidDexT1(DEX).readFromStorage(bytes32(DexSlotsLink.DEX_VARIABLES2_SLOT));
         fee_ = (dexVariables2_ >> 2) & X17;
         revenueCut_ = (dexVariables2_ >> 19) & X7;
     }
 
-    /// @notice returns the last stored prices of the pool and the last interaction time stamp
     function getDexVariable()
         public
         view
@@ -184,8 +177,7 @@ contract FluidDexFeeHandler is DynamicFee {
         lastInteractionTimeStamp_ = (dexVariables_ >> 121) & X33;
     }
 
-    /// @notice returns the dynamic fee for the dex based on the last stored price of the pool
-    function getDexDynamicFees() public view returns (uint256) {
+    function rebalance() external onlyRebalancer {
         (
             uint256 lastToLastStoredPrice_,
             uint256 lastStoredPriceOfPool_,
@@ -194,12 +186,12 @@ contract FluidDexFeeHandler is DynamicFee {
 
         if (lastInteractionTimeStamp_ == block.timestamp) lastStoredPriceOfPool_ = lastToLastStoredPrice_;
 
-        return _computeDynamicFee(_getDeviationFromPrice(lastStoredPriceOfPool_));
-    }
+        // Absolute deviation from 1e27
+        uint256 deviation = lastStoredPriceOfPool_ > SCALE
+            ? lastStoredPriceOfPool_ - SCALE
+            : SCALE - lastStoredPriceOfPool_;
 
-    /// @notice rebalances the fee
-    function rebalance() external onlyRebalancer {
-        uint256 newFee_ = getDexDynamicFees();
+        uint256 newFee_ = _computeDynamicFee(deviation);
 
         (uint256 currentFee_, uint256 currentRevenueCut_) = getDexFeeAndRevenueCut();
 
@@ -216,7 +208,21 @@ contract FluidDexFeeHandler is DynamicFee {
 
     /// @notice returns how much new config would be different from current config in percent (100 = 1%, 1 = 0.01%).
     function configPercentDiff() public view returns (uint256) {
-        uint256 newFee_ = getDexDynamicFees();
+        (
+            uint256 lastToLastStoredPrice_,
+            uint256 lastStoredPriceOfPool_,
+            uint256 lastInteractionTimeStamp_
+        ) = getDexVariable();
+
+        if (lastInteractionTimeStamp_ == block.timestamp) lastStoredPriceOfPool_ = lastToLastStoredPrice_;
+
+        // Absolute deviation from 1.0
+        uint256 deviation = lastStoredPriceOfPool_ > SCALE
+            ? lastStoredPriceOfPool_ - SCALE
+            : SCALE - lastStoredPriceOfPool_;
+
+        uint256 newFee_ = _computeDynamicFee(deviation);
+
         (uint256 currentFee_, ) = getDexFeeAndRevenueCut();
 
         return _configPercentDiff(currentFee_, newFee_);

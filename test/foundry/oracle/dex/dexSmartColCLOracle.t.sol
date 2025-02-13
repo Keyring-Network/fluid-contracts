@@ -17,8 +17,6 @@ import { MockChainlinkFeed } from "../mocks/mockChainlinkFeed.sol";
 import "forge-std/console2.sol";
 
 contract DexSmartColCLOracleTest is Test {
-    uint8 public constant SAMPLE_TARGET_DECIMALS = 20; // sample target decimals - doesn't matter in test
-
     address internal constant DEX_USDC_ETH = 0x2886a01a0645390872a9eb99dAe1283664b0c524;
     address internal constant UniV3CheckCLRSOracle_ETH_USDC = 0x5b2860C6D6F888319C752aaCDaf8165C21095E3a;
 
@@ -61,7 +59,6 @@ contract DexSmartColCLOracleTest is Test {
         oracle = new DexSmartColCLOracle(
             DexSmartColCLOracle.DexSmartColCLOracleParams(
                 "USDC per 1 USDC/ETH col share",
-                SAMPLE_TARGET_DECIMALS,
                 DEX_USDC_ETH,
                 true, // quote in USDC (token0)
                 IFluidOracle(address(0)),

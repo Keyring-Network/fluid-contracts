@@ -2415,8 +2415,7 @@ contract VaultT1Test is VaultT1BaseTest {
         vaultContract_.operate(0, collateral_, debt_, alice);
 
         FluidVaultLiquidationResolver liquidationResolver = new FluidVaultLiquidationResolver(
-            IFluidVaultResolver(address(vaultResolver)),
-            IFluidLiquidity(address(liquidity))
+            IFluidVaultResolver(address(vaultResolver))
         );
         LiquidationResolverStructs.Swap memory swap = liquidationResolver.getSwapForProtocol(vault_);
         assertEq(swap.data.inAmt, 0, "unexpected liquidation available");

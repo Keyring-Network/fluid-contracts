@@ -5,8 +5,6 @@ import { FluidOracle } from "../fluidOracle.sol";
 import { FallbackOracleImpl } from "../implementations/fallbackOracleImpl.sol";
 import { ErrorTypes } from "../errorTypes.sol";
 
-/// @DEV DEPRECATED. USE GENERIC ORACLE INSTEAD. WILL BE REMOVED SOON.
-
 /// @title   Chainlink / Redstone Oracle (with fallback)
 /// @notice  Gets the exchange rate between the underlying asset and the peg asset by using:
 ///          the price from a Chainlink price feed or a Redstone Oracle with one of them being used as main source and
@@ -19,11 +17,10 @@ contract FallbackCLRSOracle is FluidOracle, FallbackOracleImpl {
     /// @param redstoneOracle_      Redstone Oracle data. (address can be set to zero address if using Chainlink only)
     constructor(
         string memory infoName_,
-        uint8 targetDecimals_,
         uint8 mainSource_,
         ChainlinkConstructorParams memory chainlinkParams_,
         RedstoneOracleData memory redstoneOracle_
-    ) FallbackOracleImpl(mainSource_, chainlinkParams_, redstoneOracle_) FluidOracle(infoName_, targetDecimals_) {}
+    ) FallbackOracleImpl(mainSource_, chainlinkParams_, redstoneOracle_) FluidOracle(infoName_) {}
 
     /// @inheritdoc FluidOracle
     function getExchangeRateOperate() public view virtual override returns (uint256 exchangeRate_) {

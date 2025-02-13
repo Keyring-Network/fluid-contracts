@@ -82,6 +82,6 @@ contract UniV3CheckCLRSOracleL2Test is UniV3CheckCLRSOracleTest, OracleL2TestSui
     function _createOracle(
         UniV3CheckCLRSOracle.UniV3CheckCLRSConstructorParams memory params
     ) internal virtual override returns (IFluidOracle) {
-        return new UniV3CheckCLRSOracleL2(infoName, SAMPLE_TARGET_DECIMALS, params, address(mockFeed));
+        return new UniV3CheckCLRSOracleL2(infoName, params, address(mockFeed));
     }
 }

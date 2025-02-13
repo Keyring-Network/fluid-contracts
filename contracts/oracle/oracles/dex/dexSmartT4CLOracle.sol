@@ -23,7 +23,6 @@ contract DexSmartT4CLOracle is
 {
     struct DexSmartT4CLOracleParams {
         string infoName;
-        uint8 targetDecimals;
         address dexPool;
         bool quoteInToken0;
         ChainlinkOracleImpl.ChainlinkConstructorParams reservesConversion;
@@ -36,7 +35,7 @@ contract DexSmartT4CLOracle is
     constructor(
         DexSmartT4CLOracleParams memory params_
     )
-        FluidOracle(params_.infoName, params_.targetDecimals)
+        FluidOracle(params_.infoName)
         DexOracleAdjustResult(params_.resultMultiplier, params_.resultDivisor)
         DexReservesFromPEX(params_.dexPool, params_.quoteInToken0)
         DexConversionPriceCL(

@@ -7,7 +7,7 @@ import { FluidOracle } from "../oracle/fluidOracle.sol";
 contract MockOracle is FluidOracle {
     uint256 public price;
 
-    constructor() FluidOracle("someName", 20) {}
+    constructor() FluidOracle("someName") {}
 
     // Price is in 1e27 decimals between 2 tokens.
     // For example: if 1 ETH = 2000 USDC, that means 1e18 of ETH = 2000 * 1e6 of USDC

@@ -103,7 +103,7 @@ const config = {
     polygon: {
       ...sharedNetworkConfig,
       url: "https://rpc.ankr.com/polygon",
-      gasPrice: 125_000_000_000,
+      gasPrice: 85_000_000_000,
     },
   },
   etherscan: {

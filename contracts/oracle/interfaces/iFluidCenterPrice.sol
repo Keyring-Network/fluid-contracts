@@ -11,7 +11,4 @@ interface IFluidCenterPrice {
 
     /// @notice helper string to easily identify the oracle. E.g. token symbols
     function infoName() external view returns (string memory);
-
-    /// @notice target decimals of the returned rate. for center price contracts it is always 27
-    function targetDecimals() external view returns (uint8);
 }

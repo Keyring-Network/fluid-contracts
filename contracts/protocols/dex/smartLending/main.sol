@@ -386,7 +386,7 @@ contract FluidSmartLending is ERC20, Variables, Error, ReentrancyGuard, Events {
             (token0Amt_) = DEX.withdrawPerfectInOneToken(shares_, minToken0Withdraw_, minToken1Withdraw_, to_);
         } else if (minToken0Withdraw_ == 0 && minToken1Withdraw_ > 0) {
             // withdraw only in token1, token0Amt_ remains 0
-            (token1Amt_) = DEX.withdrawPerfectInOneToken(shares_, minToken0Withdraw_, minToken1Withdraw_, to_);
+            (token1Amt_) = DEX.withdrawPerfectInOneToken(token0Amt_, minToken0Withdraw_, minToken1Withdraw_, to_);
         } else {
             // meaning user sent both amounts as == 0
             revert FluidSmartLendingError(ErrorTypes.SmartLending__InvalidAmounts);

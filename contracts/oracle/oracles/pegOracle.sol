@@ -11,11 +11,10 @@ import { PegOracleImpl } from "../implementations/pegOracleImpl.sol";
 contract PegOracle is FluidOracle, PegOracleImpl {
     constructor(
         string memory infoName_,
-        uint8 targetDecimals_,
         uint8 colTokenDecimals_,
         uint8 debtTokenDecimals_,
         IERC4626 erc4626Feed_
-    ) PegOracleImpl(colTokenDecimals_, debtTokenDecimals_, erc4626Feed_) FluidOracle(infoName_, targetDecimals_) {}
+    ) PegOracleImpl(colTokenDecimals_, debtTokenDecimals_, erc4626Feed_) FluidOracle(infoName_) {}
 
     /// @inheritdoc FluidOracle
     function getExchangeRateOperate() public view override returns (uint256 exchangeRate_) {

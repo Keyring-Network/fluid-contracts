@@ -4,8 +4,6 @@ pragma solidity 0.8.21;
 import { FluidOracleL2 } from "../fluidOracleL2.sol";
 import { UniV3CheckCLRSOracle } from "../oracles/uniV3CheckCLRSOracle.sol";
 
-/// @DEV DEPRECATED. USE GENERIC ORACLE INSTEAD. WILL BE REMOVED SOON.
-
 /// @title   UniswapV3 checked against Chainlink / Redstone Oracle for Layer 2 (with sequencer outage detection). Either one reported as exchange rate.
 /// @notice  Gets the exchange rate between the underlying asset and the peg asset by using:
 ///          the price from a UniV3 pool (compared against 3 TWAPs) and (optionally) comparing it against a Chainlink
@@ -24,10 +22,9 @@ import { UniV3CheckCLRSOracle } from "../oracles/uniV3CheckCLRSOracle.sol";
 contract UniV3CheckCLRSOracleL2 is FluidOracleL2, UniV3CheckCLRSOracle {
     constructor(
         string memory infoName_,
-        uint8 targetDecimals_,
         UniV3CheckCLRSConstructorParams memory params_,
         address sequencerUptimeFeed_
-    ) UniV3CheckCLRSOracle(infoName_, targetDecimals_, params_) FluidOracleL2(sequencerUptimeFeed_) {}
+    ) UniV3CheckCLRSOracle(infoName_, params_) FluidOracleL2(sequencerUptimeFeed_) {}
 
     /// @inheritdoc FluidOracleL2
     function getExchangeRateOperate()

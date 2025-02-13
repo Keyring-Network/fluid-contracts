@@ -12,9 +12,8 @@ import { FluidGenericOracleBase } from "./genericOracleBase.sol";
 contract FluidGenericOracle is FluidOracle, FluidGenericOracleBase {
     constructor(
         string memory infoName_,
-        uint8 targetDecimals_,
         OracleHopSource[] memory sources_
-    ) FluidOracle(infoName_, targetDecimals_) FluidGenericOracleBase(sources_) {}
+    ) FluidOracle(infoName_) FluidGenericOracleBase(sources_) {}
 
     /// @inheritdoc FluidOracle
     function getExchangeRateOperate() public view virtual override returns (uint256 exchangeRate_) {

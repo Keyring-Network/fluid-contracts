@@ -12,10 +12,9 @@ import { FluidGenericOracle } from "../oracles/genericOracle.sol";
 contract FluidGenericOracleL2 is FluidOracleL2, FluidGenericOracle {
     constructor(
         string memory infoName_,
-        uint8 targetDecimals_,
         OracleHopSource[] memory sources_,
         address sequencerUptimeFeed_
-    ) FluidGenericOracle(infoName_, targetDecimals_, sources_) FluidOracleL2(sequencerUptimeFeed_) {}
+    ) FluidGenericOracle(infoName_, sources_) FluidOracleL2(sequencerUptimeFeed_) {}
 
     /// @inheritdoc FluidOracleL2
     function getExchangeRateOperate()

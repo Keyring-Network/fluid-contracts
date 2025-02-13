@@ -70,11 +70,6 @@ abstract contract FluidContractRate is IFluidOracle, FluidCenterPrice, Variables
     }
 
     /// @inheritdoc IFluidOracle
-    function targetDecimals() public pure override(IFluidOracle, FluidCenterPrice) returns (uint8) {
-        return _TARGET_DECIMALS;
-    }
-
-    /// @inheritdoc IFluidOracle
     function getExchangeRate() external view virtual returns (uint256 exchangeRate_) {
         return _rate;
     }

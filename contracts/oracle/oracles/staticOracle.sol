@@ -9,12 +9,7 @@ contract StaticNoBorrowOracle is FluidOracle {
     uint256 internal immutable STATIC_PRICE;
     bool internal immutable LIQUIDATE_ZERO;
 
-    constructor(
-        string memory infoName_,
-        uint8 targetDecimals_,
-        uint256 staticPrice_,
-        bool liquidateZero_
-    ) FluidOracle(infoName_, targetDecimals_) {
+    constructor(string memory infoName_, uint256 staticPrice_, bool liquidateZero_) FluidOracle(infoName_) {
         if (staticPrice_ == 0) revert("static price 0");
         STATIC_PRICE = staticPrice_;
         LIQUIDATE_ZERO = liquidateZero_;

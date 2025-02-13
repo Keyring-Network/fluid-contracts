@@ -27,8 +27,6 @@ contract OracleTestSuite is Test {
 
     string infoName = "SomeName / SomeToken";
 
-    uint8 public constant SAMPLE_TARGET_DECIMALS = 20; // sample target decimals - doesn't matter in test
-
     uint32[] secondsAgos_ = new uint32[](5);
 
     uint256[] uniswapTwapDeltas_ = new uint256[](3);

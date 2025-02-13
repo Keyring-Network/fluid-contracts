@@ -41,7 +41,7 @@ contract UniV3CheckCLRSOracleTest is OracleTestSuite {
     function _createOracle(
         UniV3CheckCLRSOracle.UniV3CheckCLRSConstructorParams memory params
     ) internal virtual returns (IFluidOracle) {
-        return new UniV3CheckCLRSOracle(infoName, SAMPLE_TARGET_DECIMALS, params);
+        return new UniV3CheckCLRSOracle(infoName, params);
     }
 
     function test_constructor_RateSourceShouldBeBetweenOneAndThree() public {

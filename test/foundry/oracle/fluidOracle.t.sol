@@ -8,7 +8,7 @@ import { ErrorTypes } from "../../../contracts/oracle/errorTypes.sol";
 import { Error } from "../../../contracts/oracle/error.sol";
 
 contract FluidOracleHarness is FluidOracle {
-    constructor(string memory infoName_) FluidOracle(infoName_, 20) {}
+    constructor(string memory infoName_) FluidOracle(infoName_) {}
 
     function getExchangeRate() external view virtual override returns (uint256 exchangeRate_) {
         // not implemented

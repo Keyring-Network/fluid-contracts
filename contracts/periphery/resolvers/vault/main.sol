@@ -473,9 +473,6 @@ contract FluidVaultResolver is Helpers {
                         userSupplyLiquidityOrDexData_,
                         userSupply_
                     );
-
-                    userSupply_ = (userSupply_ * exchangePricesAndRates_.liquiditySupplyExchangePrice) /
-                        EXCHANGE_PRICES_PRECISION;
                 } else {
                     // smart col -> using Dex libraries
                     userSupply_ = (userSupplyLiquidityOrDexData_ >> DexSlotsLink.BITS_USER_SUPPLY_AMOUNT) & X64;

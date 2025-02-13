@@ -21,7 +21,6 @@ contract FallbackCLRS_Chainlink2Hops_OracleTest is OracleTestSuite {
 
         oracle = new FallbackCLRSOracle(
             infoName,
-            SAMPLE_TARGET_DECIMALS,
             1, // mainsource = chainlink
             ChainlinkStructs.ChainlinkConstructorParams({
                 hops: 2,
@@ -74,7 +73,6 @@ contract FallbackCLRS_Chainlink2Hops_OracleTest2 is OracleTestSuite {
 
         oracle = new FallbackCLRSOracle(
             infoName,
-            SAMPLE_TARGET_DECIMALS,
             1, // mainsource = chainlink
             ChainlinkStructs.ChainlinkConstructorParams({
                 hops: 2,
@@ -125,7 +123,6 @@ contract FallbackCLRS_Chainlink2Hops_OracleTest3 is OracleTestSuite {
 
         oracle = new FallbackCLRSOracle(
             infoName,
-            SAMPLE_TARGET_DECIMALS,
             1, // mainsource = chainlink
             ChainlinkStructs.ChainlinkConstructorParams({
                 hops: 2,
@@ -179,7 +176,6 @@ contract FallbackCLRS_Chainlink3Hops_OracleTest is OracleTestSuite {
 
         oracle = new FallbackCLRSOracle(
             infoName,
-            SAMPLE_TARGET_DECIMALS,
             1, // mainsource = chainlink
             ChainlinkStructs.ChainlinkConstructorParams({
                 hops: 3,
@@ -244,7 +240,6 @@ contract FallbackCLRS_Chainlink3Hops_OracleTest is OracleTestSuite {
         IChainlinkAggregatorV3 CHAINLINK_FEED = IChainlinkAggregatorV3(0x986b5E1e1755e3C2440e960477f25201B0a8bbD4);
         oracle = new FallbackCLRSOracle(
             infoName,
-            SAMPLE_TARGET_DECIMALS,
             1, // mainsource = chainlink
             ChainlinkStructs.ChainlinkConstructorParams({
                 hops: 1,
