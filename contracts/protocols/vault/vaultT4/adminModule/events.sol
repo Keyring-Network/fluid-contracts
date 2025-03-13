@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.21;
 
+import { IKeyringChecker } from "../../../interfaces/IKeyringChecker.sol";
+
 abstract contract VaultT4Events {
     /// @notice emitted when the supply rate config is updated
     event LogUpdateSupplyRate(int supplyRate_);
@@ -19,4 +21,8 @@ abstract contract VaultT4Events {
         uint liquidationPenalty_,
         uint borrowFee_
     );
+
+    /// @notice Emitted when a new keyring checker and policy ID are set.
+    event SetKeyringConfig(IKeyringChecker indexed newKeyringChecker, uint256 newKeyringPolicyId);
+
 }
