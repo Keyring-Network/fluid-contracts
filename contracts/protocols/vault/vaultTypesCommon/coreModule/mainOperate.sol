@@ -25,6 +25,23 @@ abstract contract FluidVaultOperate is HelpersOperate {
         _;
     }
 
+    /**
+     * @notice Modifier to check if the user is whitelisted by Keyring Network
+     * @param to_ The address to check
+     */
+    modifier onlyKeyringWhitelisted(address to_) {
+        if (address(KEYRING_CHECKER) != address(0)) {
+            address owner_ = to_;
+            if (to_ == address(0)) {
+                owner_ = msg.sender;
+            }
+            if (!KEYRING_CHECKER.checkCredential(KEYRING_POLICY_ID, owner_)) {
+                revert FluidVaultError(ErrorTypes.Vault__UserNotWhitelisted);
+            }
+        }
+        _;
+    }
+
     /// @dev Single function which handles supply, withdraw, borrow & payback
     /// @param nftId_ NFT ID for interaction. If 0 then create new NFT/position.
     /// @param newCol_ new collateral. If positive then deposit, if negative then withdraw, if 0 then do nohing
@@ -41,7 +58,7 @@ abstract contract FluidVaultOperate is HelpersOperate {
         int256 newDebt_, // if negative then payback
         address to_, // address at which the borrow & withdraw amount should go to. If address(0) then it'll go to msg.sender
         uint256 vaultVariables_
-    )
+    ) onlyKeyringWhitelisted(to_)
         internal
         returns (
             uint256, // nftId_
