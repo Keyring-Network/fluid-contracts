@@ -4,9 +4,6 @@ pragma solidity 0.8.21;
 import { FluidVaultAdmin } from "../../vaultTypesCommon/adminModule/main.sol";
 import { ErrorTypes } from "../../errorTypes.sol";
 import { VaultT4Events } from "./events.sol";
-import { IKeyringChecker } from "../../../interfaces/IKeyringChecker.sol";
-
-
 
 /// @notice Fluid Vault protocol Admin Module contract.
 ///         Implements admin related methods to set configs such as liquidation params, rates
@@ -104,12 +101,5 @@ contract FluidVaultT4Admin is FluidVaultAdmin, VaultT4Events {
             (withdrawGap_ << 62) |
             (liquidationPenalty_ << 72) |
             (borrowFee_ << 82);
-    }
-
-    function setKeyringConfig(IKeyringChecker newKeyringChecker, uint256 newKeyringPolicyId) external onlyOwner {
-        keyringChecker = IKeyringChecker(newKeyringChecker);
-        keyringPolicyId = newKeyringPolicyId;
-
-        emit EventsLib.SetKeyringConfig(newKeyringChecker, newKeyringPolicyId);
     }
 }
